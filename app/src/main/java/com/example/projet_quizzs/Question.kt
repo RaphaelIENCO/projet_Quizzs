@@ -17,4 +17,8 @@ class Question {
         intitule = intit!!
     }
 
+    fun getAnswer() : String{
+        return propositions.get(reponse-1)
+    }
+
 }

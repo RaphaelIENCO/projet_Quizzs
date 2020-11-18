@@ -19,22 +19,36 @@ class quizzsParser {
             val parser = factory.newPullParser()
             parser.setInput(inputStream, null)
             var eventType = parser.eventType
+            var isQuestion = false
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 val tagname = parser.name
                 when (eventType) {
                     XmlPullParser.START_TAG -> if (tagname.equals("Quizz", ignoreCase = false)) {
-                        // create a new instance of quizz
                         quizz = Quizz()
+                        quizz!!.setType(parser.getAttributeValue(0))
                     }else if(tagname.equals("Question", ignoreCase = false)){
                         question = Question()
+                        //question?.setIntitule(parser.text?.trim())
+                        isQuestion = true
+                    }else if(tagname.equals("Proposition", ignoreCase = false)){
+
+                    }else if(tagname.equals("Reponse", ignoreCase = false)){
+                        question?.setReponse(parser.getAttributeValue(0).toInt())
                     }
-                    XmlPullParser.TEXT -> text = parser.text
+                    XmlPullParser.TEXT -> if(isQuestion){
+                        text = parser.text
+                        question?.setIntitule(text?.trim())
+                        isQuestion = false
+                    }else{
+                        text = parser.text
+                    }
                     XmlPullParser.END_TAG -> if (tagname.equals("Quizz", ignoreCase = false)) {
-                        // add employee object to list
                         quizz?.let { quizzs.add(it) }
                     } else if (tagname.equals("Question", ignoreCase = false)) {
-                        question?.setIntitule(text)
+                        //question?.setIntitule(text?.trim())
                         quizz?.addQuestion(question)
+                    }else if(tagname.equals("Proposition", ignoreCase = false)){
+                        question?.addProposition(text?.trim())
                     }
 
                     else -> {
