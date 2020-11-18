@@ -25,5 +25,12 @@
             android:layout_height="match_parent"
             android:text="@string/s_jouer"
             />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="CheckQUIZZS"
+            android:onClick="checkSP"
+            />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
