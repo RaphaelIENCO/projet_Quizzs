@@ -1,6 +1,8 @@
 package com.example.projet_quizzs.modelQuizz
 
-class Question {
+import java.io.Serializable
+
+class Question : Serializable{
     private var intitule:String? = null
     private var reponse:Int = 0
     private var propositions:ArrayList<String> = ArrayList<String>()

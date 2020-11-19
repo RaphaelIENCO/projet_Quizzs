@@ -9,4 +9,13 @@
     <string name="faux">Faux</string>
     <string name="next">Suivant</string>
     <string name="s_retour_menu">Retour menu</string>
+    <string name="s_ajouter_quizz">Ajouter Quizz</string>
+    <string name="s_creer">CREER</string>
+    <string name="s_annuler">ANNULER</string>
+    <string name="s_question">Question</string>
+    <string name="s_ajouter_proposition">Ajouter proposition</string>
+    <string name="s_ajouter_question">Ajouter question</string>
+    <string name="s_proposition">Proposition</string>
+    <string name="s_reponse_juste">Réponse juste ?</string>
+    <string name="s_update_liste_de_quizz">Update liste de quizz</string>
 </resources>

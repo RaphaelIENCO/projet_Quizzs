@@ -9,6 +9,10 @@ class QuizzList {
         quizzs = newQuizzs
     }
 
+    fun addQuizz(quizz : Quizz){
+        quizzs.add(quizz)
+    }
+
     fun getSize(): Int {
         return quizzs.size
     }

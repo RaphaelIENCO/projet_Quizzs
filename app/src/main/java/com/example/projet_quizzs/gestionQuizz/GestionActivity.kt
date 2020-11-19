@@ -1,18 +1,25 @@
 package com.example.projet_quizzs.gestionQuizz
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.projet_quizzs.modelQuizz.QuizzList
 import com.example.projet_quizzs.R
+import com.example.projet_quizzs.modelQuizz.Question
+import com.example.projet_quizzs.modelQuizz.Quizz
+import com.example.projet_quizzs.modelQuizz.QuizzList
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
@@ -20,6 +27,7 @@ import javax.xml.transform.stream.StreamResult
 
 
 class GestionActivity : AppCompatActivity() {
+    private val CODE_ADDACTIVITY = 2
 
     var quizzs: QuizzList = QuizzList();
     lateinit var layoutManager : RecyclerView.LayoutManager
@@ -115,6 +123,37 @@ class GestionActivity : AppCompatActivity() {
 
         }*/
 
+    }
+
+    fun addQuizz(view: View) {
+        val intent = Intent(this@GestionActivity, AddQuizzActivity::class.java)
+        startActivityForResult(intent, CODE_ADDACTIVITY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CODE_ADDACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+                val quizzToAdd = data?.getSerializableExtra("key_1") as Quizz
+                println("=============")
+                println(quizzToAdd.getType())
+                println("=============")
+
+                if(!quizzToAdd.getType().equals("") && quizzToAdd.getNbrQuestion() >=1){
+                    quizzs.addQuizz(quizzToAdd)
+
+                    val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
+                    val prefsEditor = mPrefs.edit()
+                    val gson = Gson()
+                    val json = gson.toJson(quizzs)
+                    prefsEditor.putString("quizzs", json)
+                    prefsEditor.apply()
+                }
+
+            }
+            else -> {
+            }
+        }
     }
 
 }

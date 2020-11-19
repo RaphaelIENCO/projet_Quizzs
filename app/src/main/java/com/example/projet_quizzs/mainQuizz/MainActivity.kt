@@ -1,5 +1,6 @@
 package com.example.projet_quizzs.mainQuizz
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -106,21 +107,44 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent,CODE_GESTIONACTIVITY)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CODE_GESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+                val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
+                val gson = Gson()
+                val json = mPrefs.getString("quizzs", "")
+                quizzs = gson.fromJson(json, QuizzList::class.java)
+
+                vueQuizzList = findViewById(R.id.vue_quizzs_main)
+                layoutManager = LinearLayoutManager(this)
+                vueQuizzList.setLayoutManager(layoutManager)
+                adapter = MainQuizzAdapter(this, quizzs.getQuizzs())
+                vueQuizzList.setAdapter(adapter)
+            }
+            else -> {
+            }
+        }
+    }
+
     fun checkSP(view: View) {
         val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         val gson = Gson()
         val json = mPrefs.getString("quizzs", "")
-        println("aled : ")
-        println(json)
         quizzs = gson.fromJson(json, QuizzList::class.java)
         println(quizzs.getSize())
+
+        vueQuizzList = findViewById(R.id.vue_quizzs_main)
+        layoutManager = LinearLayoutManager(this)
+        vueQuizzList.setLayoutManager(layoutManager)
+        adapter = MainQuizzAdapter(this, quizzs.getQuizzs())
+        vueQuizzList.setAdapter(adapter)
     }
 
     fun startQuiz(id : Int) {
         point = 0 // tout remis à 0 pour être sur...
         currentQuestion = 0
 
-        Toast.makeText(this, id.toString(), Toast.LENGTH_LONG).show()
         val start = findViewById<LinearLayout>(R.id.layoutStart)
         val game = findViewById<LinearLayout>(R.id.layoutGame)
 

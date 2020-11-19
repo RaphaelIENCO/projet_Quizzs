@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -15,40 +13,34 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/BORDEL"
+
+        <EditText
+            android:id="@+id/add_proposition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/s_proposition"
+            />
+
+        <CheckBox
+            android:id="@+id/add_prop_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bienvenu_dans_la_gestion"
-            tools:ignore="MissingConstraints" />
+            android:text="@string/s_reponse_juste"
+            />
+
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="updateQuizzs"
-            android:text="@string/s_BtnUpdateQuizz" />
+            android:onClick="creerProposition"
+            android:text="@string/s_creer" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="addQuizz"
-            android:text="@string/s_ajouter_quizz" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/vue_quizzs_gestion"
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:orientation="vertical"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:onClick="annuler"
+            android:text="@string/s_annuler" />
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,12 @@
         </activity>
         <activity android:name=".gestionQuizz.GestionActivity">
         </activity>
+        <activity android:name=".gestionQuizz.AddQuizzActivity">
+        </activity>
+        <activity android:name=".gestionQuizz.AddQuestionActivity">
+        </activity>
+        <activity android:name=".gestionQuizz.AddPropositionActivity">
+        </activity>
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
