@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity() {
     private val CODE_GESTIONACTIVITY = 1
 
     var quizzs: QuizzList = QuizzList();
+    lateinit var layoutManager : RecyclerView.LayoutManager
+    lateinit var adapter : RecyclerView.Adapter<MainQuizzAdapter.ViewHolder>
+    lateinit var vueQuizzList : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +46,8 @@ class MainActivity : AppCompatActivity() {
         prefsEditor.apply()
         var xml= ""
         val task = asyncReadXML()
+
+        var ctx = this
 
         GlobalScope.launch{
             val webBuilderFactory = DocumentBuilderFactory.newInstance()
@@ -67,7 +74,18 @@ class MainActivity : AppCompatActivity() {
             println(json)
             prefsEditor.putString("quizzs", json)
             prefsEditor.apply()
+
+            runOnUiThread {
+                vueQuizzList = findViewById(R.id.vue_quizzs_main)
+                layoutManager = LinearLayoutManager(ctx)
+                vueQuizzList.setLayoutManager(layoutManager)
+                adapter = MainQuizzAdapter(ctx, quizzs.getQuizzs())
+                vueQuizzList.setAdapter(adapter)
+            }
         }
+
+
+
     }
 
     fun startGestion(view: View) {

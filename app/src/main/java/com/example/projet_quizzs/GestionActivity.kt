@@ -114,7 +114,6 @@ class GestionActivity : AppCompatActivity() {
             println(quizzs.size)
 
         }*/
-        //println("PRINT 2  " + xml)
 
     }
 
