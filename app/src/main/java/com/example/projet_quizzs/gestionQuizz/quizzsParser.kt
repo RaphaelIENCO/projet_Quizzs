@@ -1,5 +1,7 @@
-package com.example.projet_quizzs
+package com.example.projet_quizzs.gestionQuizz
 
+import com.example.projet_quizzs.modelQuizz.Question
+import com.example.projet_quizzs.modelQuizz.Quizz
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory

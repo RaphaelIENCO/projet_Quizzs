@@ -1,4 +1,6 @@
-package com.example.projet_quizzs
+package com.example.projet_quizzs.modelQuizz
+
+import com.example.projet_quizzs.modelQuizz.Question
 
 class Quizz {
 

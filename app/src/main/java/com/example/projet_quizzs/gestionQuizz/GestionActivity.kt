@@ -1,11 +1,12 @@
-package com.example.projet_quizzs
+package com.example.projet_quizzs.gestionQuizz
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.projet_quizzs.modelQuizz.QuizzList
+import com.example.projet_quizzs.R
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class GestionActivity : AppCompatActivity() {
         println(json)
         println("==========")
         println(gson.fromJson(json, QuizzList::class.java))*/
-        quizzs = gson.fromJson(json,QuizzList::class.java)
+        quizzs = gson.fromJson(json, QuizzList::class.java)
         println(quizzs.getSize())
 
         vueQuizzList = findViewById(R.id.vue_quizzs_gestion)
@@ -52,7 +53,6 @@ class GestionActivity : AppCompatActivity() {
 
     fun updateQuizzs(view: View) {
         var xml= ""
-        val task = asyncReadXML()
 
         GlobalScope.launch{
             val webBuilderFactory = DocumentBuilderFactory.newInstance()

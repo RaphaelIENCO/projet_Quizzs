@@ -1,4 +1,4 @@
-package com.example.projet_quizzs
+package com.example.projet_quizzs.mainQuizz
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,11 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.projet_quizzs.*
+import com.example.projet_quizzs.gestionQuizz.GestionActivity
+import com.example.projet_quizzs.gestionQuizz.quizzsParser
+import com.example.projet_quizzs.modelQuizz.Quizz
+import com.example.projet_quizzs.modelQuizz.QuizzList
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -45,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         prefsEditor.putString("quizzs", json)
         prefsEditor.apply()
         var xml= ""
-        val task = asyncReadXML()
 
         var ctx = this
 
@@ -99,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         val json = mPrefs.getString("quizzs", "")
         println("aled : ")
         println(json)
-        quizzs = gson.fromJson(json,QuizzList::class.java)
+        quizzs = gson.fromJson(json, QuizzList::class.java)
         println(quizzs.getSize())
     }
 }

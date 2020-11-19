@@ -1,4 +1,5 @@
-package com.example.projet_quizzs
+package com.example.projet_quizzs.mainQuizz
+
 
 
 
@@ -9,9 +10,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.projet_quizzs.modelQuizz.Quizz
+import com.example.projet_quizzs.R
 
 
-class GestionQuizzAdapter(contxt : Context, quizzL : ArrayList<Quizz>): RecyclerView.Adapter<GestionQuizzAdapter.ViewHolder>() {
+class MainQuizzAdapter(contxt : Context, quizzL : ArrayList<Quizz>): RecyclerView.Adapter<MainQuizzAdapter.ViewHolder>() {
 
     var ctx = contxt
     var quizzs = quizzL
@@ -21,13 +24,13 @@ class GestionQuizzAdapter(contxt : Context, quizzL : ArrayList<Quizz>): Recycler
         var textItemQuizz: TextView
 
         init {
-            textItemQuizz = itemView.findViewById(R.id.text_item_quizz)
+            textItemQuizz = itemView.findViewById(R.id.text_item_quizz_main)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.getContext())
-        val v: View = inflater.inflate(R.layout.item_quizz_gestion, parent, false)
+        val v: View = inflater.inflate(R.layout.item_quizz_main, parent, false)
         return ViewHolder(v)
 
     }
