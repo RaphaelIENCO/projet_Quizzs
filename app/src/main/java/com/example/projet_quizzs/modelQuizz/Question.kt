@@ -21,4 +21,16 @@ class Question {
         return propositions.get(reponse-1)
     }
 
+    fun getReponseId() : Int{
+        return reponse
+    }
+
+    fun getIntitule(): String? {
+        return intitule
+    }
+
+    fun getProposition() : ArrayList<String> {
+        return propositions
+    }
+
 }

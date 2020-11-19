@@ -5,4 +5,8 @@
     <string name="s_jouer">Jouer !</string>
     <string name="bienvenu_dans_la_gestion">Bienvenue dans la gestion</string>
     <string name="s_BtnUpdateQuizz">MAJ Quizzs</string>
+    <string name="vrai">Vrai</string>
+    <string name="faux">Faux</string>
+    <string name="next">Suivant</string>
+    <string name="s_retour_menu">Retour menu</string>
 </resources>

@@ -18,4 +18,12 @@ class Quizz {
     fun getType() : String{
         return type
     }
+
+    fun getQuestion(id : Int) : Question{
+        return questions.get(id)
+    }
+
+    fun getNbrQuestion() : Int {
+        return questions.size
+    }
 }

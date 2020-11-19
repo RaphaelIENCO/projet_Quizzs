@@ -4,12 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.projet_quizzs.*
+import com.example.projet_quizzs.R
 import com.example.projet_quizzs.gestionQuizz.GestionActivity
 import com.example.projet_quizzs.gestionQuizz.quizzsParser
+import com.example.projet_quizzs.modelQuizz.Question
 import com.example.projet_quizzs.modelQuizz.Quizz
 import com.example.projet_quizzs.modelQuizz.QuizzList
 import com.google.gson.Gson
@@ -31,6 +36,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var layoutManager : RecyclerView.LayoutManager
     lateinit var adapter : RecyclerView.Adapter<MainQuizzAdapter.ViewHolder>
     lateinit var vueQuizzList : RecyclerView
+    private var point = 0
+
+    private var currentQuizz = 0
+    private var currentQuestion = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,4 +115,107 @@ class MainActivity : AppCompatActivity() {
         quizzs = gson.fromJson(json, QuizzList::class.java)
         println(quizzs.getSize())
     }
+
+    fun startQuiz(id : Int) {
+        point = 0 // tout remis à 0 pour être sur...
+        currentQuestion = 0
+
+        Toast.makeText(this, id.toString(), Toast.LENGTH_LONG).show()
+        val start = findViewById<LinearLayout>(R.id.layoutStart)
+        val game = findViewById<LinearLayout>(R.id.layoutGame)
+
+        start.visibility = View.INVISIBLE
+        game.visibility = View.VISIBLE
+
+        currentQuestion = 0
+        currentQuizz = id
+
+        setUpQuestion(currentQuestion)
+    }
+
+    fun setUpQuestion(idQuestion: Int){ // add check end question
+
+        if(idQuestion >= quizzs.getQuizzs().get(currentQuizz).getNbrQuestion()){
+            endQuiz();
+            return
+        }
+
+        var question = quizzs.getQuizzs().get(currentQuizz).getQuestion(idQuestion)
+        var q = findViewById<TextView>(R.id.question)
+        q.setText(question.getIntitule())
+
+        var propositionLayout = findViewById<LinearLayout>(R.id.proposition_jeu)
+        if(propositionLayout.childCount != 0 ){
+            propositionLayout.removeAllViews()
+        }
+
+        for (i in 0 until question.getProposition().size) {
+            var buttonRep = Button(this)
+            buttonRep.setText(question.getProposition().get(i))
+            if(question.getReponseId()-1 == i){
+                buttonRep.setOnClickListener {
+                    repJuste(currentQuestion)
+                }
+            }else{
+                buttonRep.setOnClickListener {
+                    repFaux(currentQuestion)
+                }
+            }
+            propositionLayout.addView(buttonRep)
+        }
+    }
+
+    private fun endQuiz() {
+        val endGameLayout = findViewById<LinearLayout>(R.id.layoutEndGame)
+        val affichage = findViewById<TextView>(R.id.score_affiche)
+        val game = findViewById<LinearLayout>(R.id.layoutGame)
+
+        affichage.setText("Votre score est : $point")
+
+        point = 0
+        currentQuestion = 0
+
+        val buttonRep = Button(this)
+        buttonRep.setText("Rejouer !")
+        buttonRep.setOnClickListener {
+            endGameLayout.removeViewAt(2)
+            endGameLayout.visibility = View.INVISIBLE
+            startQuiz(currentQuizz)
+        }
+
+
+        endGameLayout.addView(buttonRep)
+
+
+
+        game.visibility = View.INVISIBLE
+        endGameLayout.visibility = View.VISIBLE
+    }
+
+    fun backMenu(view : View) {
+        val start = findViewById<LinearLayout>(R.id.layoutStart)
+        val endGameLayout = findViewById<LinearLayout>(R.id.layoutEndGame)
+        endGameLayout.removeViewAt(2)
+        currentQuizz = 0
+
+        endGameLayout.visibility = View.INVISIBLE
+        start.visibility = View.VISIBLE
+
+    }
+
+    fun repFaux(idQ : Int) {
+        Toast.makeText(this, "Faux", Toast.LENGTH_LONG).show()
+        currentQuestion++
+        setUpQuestion(currentQuestion)
+    }
+
+    fun repJuste(idQ : Int) {
+        Toast.makeText(this, "Juste", Toast.LENGTH_LONG).show()
+        point++;
+        currentQuestion++
+        setUpQuestion(currentQuestion)
+    }
+
+
+
 }
