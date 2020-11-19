@@ -12,4 +12,8 @@ class Quizz {
     fun setType(t : String){
         type = t
     }
+
+    fun getType() : String{
+        return type
+    }
 }

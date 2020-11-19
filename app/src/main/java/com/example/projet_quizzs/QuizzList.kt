@@ -10,4 +10,8 @@ class QuizzList {
     fun getSize(): Int {
         return quizzs.size
     }
+
+    fun getQuizzs(): ArrayList<Quizz> {
+        return quizzs
+    }
 }

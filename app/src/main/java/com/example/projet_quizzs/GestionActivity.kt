@@ -3,6 +3,9 @@ package com.example.projet_quizzs
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.gson.Gson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,6 +21,10 @@ import javax.xml.transform.stream.StreamResult
 class GestionActivity : AppCompatActivity() {
 
     var quizzs: QuizzList = QuizzList();
+    lateinit var layoutManager : RecyclerView.LayoutManager
+    lateinit var adapter : RecyclerView.Adapter<GestionQuizzAdapter.ViewHolder>
+    lateinit var vueQuizzList : RecyclerView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,12 +35,18 @@ class GestionActivity : AppCompatActivity() {
         val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         val gson = Gson()
         val json = mPrefs.getString("quizzs", "")
-        println("aled : ")
+       /* println("aled : ")
         println(json)
         println("==========")
-        println(gson.fromJson(json, QuizzList::class.java))
+        println(gson.fromJson(json, QuizzList::class.java))*/
         quizzs = gson.fromJson(json,QuizzList::class.java)
         println(quizzs.getSize())
+
+        vueQuizzList = findViewById(R.id.vue_quizzs_gestion)
+        layoutManager = LinearLayoutManager(this)
+        vueQuizzList.setLayoutManager(layoutManager)
+        adapter = GestionQuizzAdapter(this, quizzs.getQuizzs())
+        vueQuizzList.setAdapter(adapter)
 
     }
 
