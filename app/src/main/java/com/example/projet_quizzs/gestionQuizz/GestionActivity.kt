@@ -156,11 +156,12 @@ class GestionActivity : AppCompatActivity() {
         when (requestCode) {
             CODE_ADDACTIVITY -> if (resultCode == Activity.RESULT_OK) {
                 val quizzToAdd = data?.getSerializableExtra("key_1") as Quizz
+                val isAnnuleQzz = data.extras!!.getBoolean("annule")
                 println("=============")
                 println(quizzToAdd.getType())
                 println("=============")
 
-                if(!quizzToAdd.getType().equals("") && quizzToAdd.getNbrQuestion() >=1){
+                if(!quizzToAdd.getType().equals("") && quizzToAdd.getNbrQuestion() >=1 && !isAnnuleQzz){
                     quizzs.addQuizz(quizzToAdd)
 
                     val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
@@ -175,14 +176,18 @@ class GestionActivity : AppCompatActivity() {
             CODE_EDITACTIVITY -> if (resultCode == Activity.RESULT_OK) {
                 val quizzToEdit = data?.getSerializableExtra("key_1") as Quizz
                 val idQuizzToEdit = data.getIntExtra("idQuizz",0)
+                val isAnnuleQst = data.extras!!.getBoolean("annule")
+
                 println("=============")
                 println(quizzToEdit.getType())
                 println("=============")
-                if(!quizzToEdit.getType().equals("") && quizzToEdit.getNbrQuestion() >=1){
-                    quizzs.getQuizzs().set(idQuizzToEdit,quizzToEdit)
+                if(!isAnnuleQst) {
+                    if (!quizzToEdit.getType().equals("") && quizzToEdit.getNbrQuestion() >= 1) {
+                        quizzs.getQuizzs().set(idQuizzToEdit, quizzToEdit)
 
-                }else{
-                    quizzs.getQuizzs().removeAt(idQuizzToEdit)
+                    } else {
+                        quizzs.getQuizzs().removeAt(idQuizzToEdit)
+                    }
                 }
                 val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
                 val prefsEditor = mPrefs.edit()
@@ -199,6 +204,12 @@ class GestionActivity : AppCompatActivity() {
         vueQuizzList.setLayoutManager(layoutManager)
         adapter = GestionQuizzAdapter(this, quizzs.getQuizzs())
         vueQuizzList.setAdapter(adapter)
+    }
+
+    override fun finish() {
+        val data = Intent()
+        setResult(Activity.RESULT_OK, data)
+        super.finish()
     }
 
 }

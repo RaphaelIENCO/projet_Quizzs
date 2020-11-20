@@ -16,6 +16,7 @@ class AddQuestionActivity : AppCompatActivity()  {
     private val CODE_EDITPROPOSITIONACTIVITY = 3
     private var currentRequestCode = 0
     private var currentQuestionId = 0
+    private var isAnnule = false
 
     var questionFinal = Question()
 
@@ -64,6 +65,7 @@ class AddQuestionActivity : AppCompatActivity()  {
 
     fun annuler(view: View) {
         findViewById<TextView>(R.id.add_question).setText("")
+        isAnnule = true
         finish()
     }
     fun creerQuestion(view: View) {finish()}
@@ -79,11 +81,12 @@ class AddQuestionActivity : AppCompatActivity()  {
         when (requestCode) {
             CODE_ADDPROPOSITIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
                 val proposition = data?.extras!!.getString("key_1")
-                val juste =  data?.extras!!.getBoolean("key_2")
+                val juste =  data.extras!!.getBoolean("key_2")
+                val isAnnuleProp = data.extras!!.getBoolean("annule")
                 println("=============")
                 println(proposition)
                 println("=============")
-                if(!proposition.equals("")){
+                if(!proposition.equals("") && !isAnnuleProp){
                     val tv = TextView(this)
                     val propositionLayout = findViewById<LinearLayout>(R.id.add_listProposition)
                     tv.setText(proposition)
@@ -99,16 +102,19 @@ class AddQuestionActivity : AppCompatActivity()  {
                 val proposition = data?.extras!!.getString("key_1").toString()
                 val juste =  data.extras!!.getBoolean("key_2")
                 val propositionId = data.extras!!.getInt("idProposition")
+                val isAnnuleProp = data.extras!!.getBoolean("annule")
                 println("=============")
                 println(propositionId.toString())
                 println("=============")
-                if(!proposition.equals("")){
-                    if(juste){
-                        questionFinal.setReponse(propositionId+1)
+                if(!isAnnuleProp) {
+                    if (!proposition.equals("")) {
+                        if (juste) {
+                            questionFinal.setReponse(propositionId + 1)
+                        }
+                        questionFinal.setPropositionAt(propositionId, proposition)
+                    } else {
+                        questionFinal.removePropositionAt(propositionId)
                     }
-                    questionFinal.setPropositionAt(propositionId,proposition)
-                }else{
-                    questionFinal.removePropositionAt(propositionId)
                 }
             }
             else -> {
@@ -126,6 +132,7 @@ class AddQuestionActivity : AppCompatActivity()  {
         }
 
         data.putExtra("key_1", questionFinal)
+        data.putExtra("annule",isAnnule)
         setResult(Activity.RESULT_OK, data)
         super.finish()
     }

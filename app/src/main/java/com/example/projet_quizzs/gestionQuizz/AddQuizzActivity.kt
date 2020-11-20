@@ -17,6 +17,7 @@ class AddQuizzActivity : AppCompatActivity() {
     private val CODE_EDITQUESTIONACTIVITY = 3
     private var currentRequestCode = 0
     private var currentQuizzId = 0
+    private var isAnnule = false
 
     private var quizzFinal = Quizz()
 
@@ -64,6 +65,7 @@ class AddQuizzActivity : AppCompatActivity() {
     fun creerQuizz(view: View) {finish()}
     fun annuler(view: View) {
         findViewById<TextView>(R.id.add_type).setText("")
+        isAnnule = true
         finish()
     }
 
@@ -78,11 +80,13 @@ class AddQuizzActivity : AppCompatActivity() {
         when (requestCode) {
             CODE_ADDQUESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
                 val questionToAdd = data?.getSerializableExtra("key_1") as Question
+                val isAnnuleQst = data.extras!!.getBoolean("annule")
+
                 println("=============")
                 println(questionToAdd.getIntitule())
                 println("=============")
 
-                if(!questionToAdd.getIntitule().equals("") && questionToAdd.getProposition().size >=2){
+                if(!questionToAdd.getIntitule().equals("") && questionToAdd.getProposition().size >=2 && !isAnnuleQst){
                     quizzFinal.addQuestion(questionToAdd)
                 }
 
@@ -90,16 +94,18 @@ class AddQuizzActivity : AppCompatActivity() {
             CODE_EDITQUESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
                 val questionToEdit = data?.getSerializableExtra("key_1") as Question
                 val idQuestionToEdit = data.getIntExtra("idQuestion",0)
+                val isAnnuleQst = data.extras!!.getBoolean("annule")
+
                 println("=============")
                 println(questionToEdit.getIntitule())
                 println("=============")
 
-                if(!questionToEdit.getIntitule().equals("") && questionToEdit.getProposition().size >=2){
-                    quizzFinal.setQuestionAt(idQuestionToEdit,questionToEdit)
-
-
-                }else{
-                    quizzFinal.removeQuestionAt(idQuestionToEdit)
+                if(!isAnnuleQst) {
+                    if (!questionToEdit.getIntitule().equals("") && questionToEdit.getProposition().size >= 2) {
+                        quizzFinal.setQuestionAt(idQuestionToEdit, questionToEdit)
+                    } else {
+                        quizzFinal.removeQuestionAt(idQuestionToEdit)
+                    }
                 }
 
             }
@@ -119,6 +125,7 @@ class AddQuizzActivity : AppCompatActivity() {
         }
 
         data.putExtra("key_1", quizzFinal)
+        data.putExtra("annule",isAnnule)
         setResult(Activity.RESULT_OK, data)
         super.finish()
     }

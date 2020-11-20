@@ -14,6 +14,7 @@ import com.example.projet_quizzs.modelQuizz.Question
 class AddPropositionActivity : AppCompatActivity() {
     private var currentRequestCode = 0
     private var currentPropositionId = 0
+    private var isAnnule = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +39,7 @@ class AddPropositionActivity : AppCompatActivity() {
 
     fun annuler(view: View) {
         findViewById<EditText>(R.id.add_proposition).setText("")
+        isAnnule = true
         finish()
     }
 
@@ -50,6 +52,7 @@ class AddPropositionActivity : AppCompatActivity() {
         }
         data.putExtra("key_1", proposition)
         data.putExtra("key_2",juste)
+        data.putExtra("annule",isAnnule)
         setResult(Activity.RESULT_OK, data)
         super.finish()
     }

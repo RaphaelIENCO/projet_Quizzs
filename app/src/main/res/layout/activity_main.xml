@@ -20,17 +20,6 @@
             android:text="@string/s_BtnGestion"
             android:onClick="startGestion"
            />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/s_jouer"
-            />
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/s_update_liste_de_quizz"
-            android:onClick="checkSP"
-            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/vue_quizzs_main"

@@ -107,27 +107,18 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent,CODE_GESTIONACTIVITY)
     }
 
-/*    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             CODE_GESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
-                val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
-                val gson = Gson()
-                val json = mPrefs.getString("quizzs", "")
-                quizzs = gson.fromJson(json, QuizzList::class.java)
-
-                vueQuizzList = findViewById(R.id.vue_quizzs_main)
-                layoutManager = LinearLayoutManager(this)
-                vueQuizzList.setLayoutManager(layoutManager)
-                adapter = MainQuizzAdapter(this, quizzs.getQuizzs())
-                vueQuizzList.setAdapter(adapter)
+                updateListeQuizz()
             }
             else -> {
             }
         }
-    }*/
+    }
 
-    fun checkSP(view: View) {
+    fun updateListeQuizz(){
         val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         val gson = Gson()
         val json = mPrefs.getString("quizzs", "")
