@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">projet_Quizzs</string>
+    <string name="app_name">Quizzs !</string>
     <string name="s_accueil">Accueil</string>
     <string name="s_BtnGestion">Gestion des Quizzs</string>
     <string name="s_jouer">Jouer !</string>
