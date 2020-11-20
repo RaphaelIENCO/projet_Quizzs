@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.projet_quizzs.R
 import com.example.projet_quizzs.modelQuizz.Question
 import com.example.projet_quizzs.modelQuizz.Quizz
+import com.google.gson.Gson
 
 class AddQuizzActivity : AppCompatActivity() {
     private val CODE_ADDQUESTIONACTIVITY = 3
@@ -28,6 +29,29 @@ class AddQuizzActivity : AppCompatActivity() {
     fun addQuestion(view: View) {
         val intent = Intent(this@AddQuizzActivity, AddQuestionActivity::class.java)
         startActivityForResult(intent, CODE_ADDQUESTIONACTIVITY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CODE_ADDQUESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+                val questionToAdd = data?.getSerializableExtra("key_1") as Question
+                println("=============")
+                println(questionToAdd.getIntitule())
+                println("=============")
+
+                if(!questionToAdd.getIntitule().equals("") && questionToAdd.getProposition().size >=2){
+                    val tv = TextView(this)
+                    val propositionLayout = findViewById<LinearLayout>(R.id.add_listQuestion)
+                    tv.setText(questionToAdd.getIntitule())
+                    propositionLayout.addView(tv)
+                    quizzFinal.addQuestion(questionToAdd)
+                }
+
+            }
+            else -> {
+            }
+        }
     }
 
 

@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent,CODE_GESTIONACTIVITY)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+/*    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             CODE_GESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
             else -> {
             }
         }
-    }
+    }*/
 
     fun checkSP(view: View) {
         val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);

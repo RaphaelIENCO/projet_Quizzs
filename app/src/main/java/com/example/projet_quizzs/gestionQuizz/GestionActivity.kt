@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -128,6 +129,10 @@ class GestionActivity : AppCompatActivity() {
     fun addQuizz(view: View) {
         val intent = Intent(this@GestionActivity, AddQuizzActivity::class.java)
         startActivityForResult(intent, CODE_ADDACTIVITY)
+    }
+
+    fun editQuizz(id : Int){
+        Toast.makeText(this, id.toString(), Toast.LENGTH_LONG).show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

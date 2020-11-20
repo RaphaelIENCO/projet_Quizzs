@@ -18,4 +18,5 @@
     <string name="s_proposition">Proposition</string>
     <string name="s_reponse_juste">Réponse juste ?</string>
     <string name="s_update_liste_de_quizz">Update liste de quizz</string>
+    <string name="s_modifier">Modifier</string>
 </resources>
