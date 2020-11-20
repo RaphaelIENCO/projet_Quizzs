@@ -30,6 +30,7 @@ class AddQuizzActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_addquizz)
 
+        // Si on est en mode edit --> affiche les questions
         if(currentRequestCode == 3 ){
             currentQuizzId = data.extras?.getInt("idQuizz")!!
             quizzFinal = data.extras?.getSerializable("quizzToEdit") as Quizz
@@ -39,6 +40,7 @@ class AddQuizzActivity : AppCompatActivity() {
         }
     }
 
+    // Pour chaque question cree un TextView
     fun setUpListeQuestion(){
         val questionLayout = findViewById<LinearLayout>(R.id.add_listQuestion)
         if(questionLayout.childCount > 0){
@@ -48,6 +50,7 @@ class AddQuizzActivity : AppCompatActivity() {
             val questionToAdd = quizzFinal.getQuestion(i)
             val tv = TextView(this)
 
+            // Listner pour Edit la question
             tv.setOnClickListener {
                 val intent = Intent(this@AddQuizzActivity, AddQuestionActivity::class.java)
                 intent.putExtra("requestCode",CODE_EDITQUESTIONACTIVITY)
@@ -62,13 +65,16 @@ class AddQuizzActivity : AppCompatActivity() {
         }
     }
 
+
     fun creerQuizz(view: View) {finish()}
+
     fun annuler(view: View) {
         findViewById<TextView>(R.id.add_type).setText("")
-        isAnnule = true
+        isAnnule = true //set pour ne pas supprimer le quizz
         finish()
     }
 
+    //Lance une AddQuestionActivity en mode d'ajout pour ce Quizz
     fun addQuestion(view: View) {
         val intent = Intent(this@AddQuizzActivity, AddQuestionActivity::class.java)
         intent.putExtra("requestCode",CODE_ADDQUESTIONACTIVITY)
@@ -82,10 +88,7 @@ class AddQuizzActivity : AppCompatActivity() {
                 val questionToAdd = data?.getSerializableExtra("key_1") as Question
                 val isAnnuleQst = data.extras!!.getBoolean("annule")
 
-                println("=============")
-                println(questionToAdd.getIntitule())
-                println("=============")
-
+                // ajoute la nouvelle question
                 if(!questionToAdd.getIntitule().equals("") && questionToAdd.getProposition().size >=2 && !isAnnuleQst){
                     quizzFinal.addQuestion(questionToAdd)
                 }
@@ -96,14 +99,12 @@ class AddQuizzActivity : AppCompatActivity() {
                 val idQuestionToEdit = data.getIntExtra("idQuestion",0)
                 val isAnnuleQst = data.extras!!.getBoolean("annule")
 
-                println("=============")
-                println(questionToEdit.getIntitule())
-                println("=============")
-
                 if(!isAnnuleQst) {
+                    // Si correctement renseigné, ajoute la question
                     if (!questionToEdit.getIntitule().equals("") && questionToEdit.getProposition().size >= 2) {
                         quizzFinal.setQuestionAt(idQuestionToEdit, questionToEdit)
                     } else {
+                        // Sinon la remove
                         quizzFinal.removeQuestionAt(idQuestionToEdit)
                     }
                 }
@@ -120,6 +121,7 @@ class AddQuizzActivity : AppCompatActivity() {
         val data = Intent()
         quizzFinal.setType(findViewById<TextView>(R.id.add_type).text.toString())
 
+        // Renvoi l'id du Quizz modifié
         if(currentRequestCode == 3){
             data.putExtra("idQuizz", currentQuizzId)
         }

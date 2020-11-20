@@ -33,7 +33,7 @@ import javax.xml.transform.stream.StreamResult
 class MainActivity : AppCompatActivity() {
     private val CODE_GESTIONACTIVITY = 1
 
-    var quizzs: QuizzList = QuizzList();
+    var quizzs: QuizzList = QuizzList(); // objet contenant la liste de tous les quizzs
     lateinit var layoutManager : RecyclerView.LayoutManager
     lateinit var adapter : RecyclerView.Adapter<MainQuizzAdapter.ViewHolder>
     lateinit var vueQuizzList : RecyclerView
@@ -63,32 +63,40 @@ class MainActivity : AppCompatActivity() {
 
         var ctx = this
 
+        //Coroutine pour ne pas bloquer le thread principal
         GlobalScope.launch{
+
+            //Recupere le contenu du DOM de l'url
             val webBuilderFactory = DocumentBuilderFactory.newInstance()
             val webDocBuilder = webBuilderFactory.newDocumentBuilder()
             val xmlDOM = webDocBuilder.parse(InputSource("https://dept-info.univ-fcomte.fr/joomla/images/CR0700/Quizzs.xml"))
             val xmlSource = DOMSource(xmlDOM);
+
+            //Transform le document DOM (xml) en InputStream pour le Parser
             val outputStream = ByteArrayOutputStream()
             val outputTarget = StreamResult(outputStream)
             TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget)
             val inputStream = ByteArrayInputStream(outputStream.toByteArray())
 
+            //Parser pour le InputStream cree
             val parser = quizzsParser()
-            //val istream = assets.open("src/main/res/values/Quizzs.xml")
             val arrayQuizzs = parser.parse(inputStream)
 
             println(arrayQuizzs.size)
 
             quizzs.addQuizzs(arrayQuizzs)
 
+            //Rempli les sharedPreference avec le QuizzList
             val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
             val prefsEditor = mPrefs.edit()
+            //L'objet est transformé en json
             val gson = Gson()
             val json = gson.toJson(quizzs)
             println(json)
             prefsEditor.putString("quizzs", json)
             prefsEditor.apply()
 
+            //Scope pour run dans le thread qui permet de travailler dans le layout
             runOnUiThread {
                 vueQuizzList = findViewById(R.id.vue_quizzs_main)
                 layoutManager = LinearLayoutManager(ctx)
@@ -102,11 +110,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // Lance la GestionActivity pour travailler sur les quizzs
     fun startGestion(view: View) {
         val intent = Intent(this@MainActivity, GestionActivity::class.java)
         startActivityForResult(intent,CODE_GESTIONACTIVITY)
     }
 
+    // Gere le retour de la GestionActivity pour update la liste de quizz
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -118,6 +128,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Recupere la liste de quizz en SharedPreference et maj l'affichage
     fun updateListeQuizz(){
         val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         val gson = Gson()
@@ -132,6 +143,7 @@ class MainActivity : AppCompatActivity() {
         vueQuizzList.setAdapter(adapter)
     }
 
+    // Debut d'un quizz
     fun startQuiz(id : Int) {
         point = 0 // tout remis à 0 pour être sur...
         currentQuestion = 0
@@ -140,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         val game = findViewById<LinearLayout>(R.id.layoutGame)
 
         start.visibility = View.INVISIBLE
-        game.visibility = View.VISIBLE
+        game.visibility = View.VISIBLE // affiche l'interface de jeu
 
         currentQuestion = 0
         currentQuizz = id
@@ -148,24 +160,28 @@ class MainActivity : AppCompatActivity() {
         setUpQuestion(currentQuestion)
     }
 
-    fun setUpQuestion(idQuestion: Int){ // add check end question
+    //Mets en place la question numéro idQuestion du Quizz courant
+    fun setUpQuestion(idQuestion: Int){
 
         if(idQuestion >= quizzs.getQuizzs().get(currentQuizz).getNbrQuestion()){
-            endQuiz();
+            endQuiz(); // si plus de question --> phase de fin de jeu
             return
         }
 
-        var question = quizzs.getQuizzs().get(currentQuizz).getQuestion(idQuestion)
-        var q = findViewById<TextView>(R.id.question)
+        //MChangement de la question affichée
+        val question = quizzs.getQuizzs().get(currentQuizz).getQuestion(idQuestion)
+        val q = findViewById<TextView>(R.id.question)
         q.setText(question.getIntitule())
 
-        var propositionLayout = findViewById<LinearLayout>(R.id.proposition_jeu)
+        //Vide les boutons precedents
+        val propositionLayout = findViewById<LinearLayout>(R.id.proposition_jeu)
         if(propositionLayout.childCount != 0 ){
             propositionLayout.removeAllViews()
         }
 
+        // cree un bouton pour chaque proposition et le mets dans le LinearLayout
         for (i in 0 until question.getProposition().size) {
-            var buttonRep = Button(this)
+            val buttonRep = Button(this)
             buttonRep.setText(question.getProposition().get(i))
             if(question.getReponseId()-1 == i){
                 buttonRep.setOnClickListener {
@@ -180,6 +196,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // affiche le score et propose le retour menu ou rejouer
     private fun endQuiz() {
         val endGameLayout = findViewById<LinearLayout>(R.id.layoutEndGame)
         val affichage = findViewById<TextView>(R.id.score_affiche)
@@ -190,6 +207,7 @@ class MainActivity : AppCompatActivity() {
         point = 0
         currentQuestion = 0
 
+        // Cree le bouton pour rejouer le currentQuizz
         val buttonRep = Button(this)
         buttonRep.setText("Rejouer !")
         buttonRep.setOnClickListener {
@@ -198,15 +216,13 @@ class MainActivity : AppCompatActivity() {
             startQuiz(currentQuizz)
         }
 
-
         endGameLayout.addView(buttonRep)
 
-
-
         game.visibility = View.INVISIBLE
-        endGameLayout.visibility = View.VISIBLE
+        endGameLayout.visibility = View.VISIBLE // affiche l'interface de fin de jeu
     }
 
+    // Retour au menu
     fun backMenu(view : View) {
         val start = findViewById<LinearLayout>(R.id.layoutStart)
         val endGameLayout = findViewById<LinearLayout>(R.id.layoutEndGame)
@@ -214,16 +230,18 @@ class MainActivity : AppCompatActivity() {
         currentQuizz = 0
 
         endGameLayout.visibility = View.INVISIBLE
-        start.visibility = View.VISIBLE
+        start.visibility = View.VISIBLE // affiche l'interface du menu
 
     }
 
+    // Si reponse fausse
     fun repFaux(idQ : Int) {
         Toast.makeText(this, "Faux", Toast.LENGTH_LONG).show()
         currentQuestion++
         setUpQuestion(currentQuestion)
     }
 
+    // Si reponse juste (augmente les points)
     fun repJuste(idQ : Int) {
         Toast.makeText(this, "Juste", Toast.LENGTH_LONG).show()
         point++;

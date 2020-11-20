@@ -27,6 +27,7 @@ class AddQuestionActivity : AppCompatActivity()  {
 
         setContentView(R.layout.activity_addquestion)
 
+        // Si on est en mode edit --> affiche les propositions
         if(currentRequestCode == 3 ){
             currentQuestionId = data.extras?.getInt("idQuestion")!!
             questionFinal = data.extras?.getSerializable("questionToEdit") as Question
@@ -36,6 +37,7 @@ class AddQuestionActivity : AppCompatActivity()  {
         }
     }
 
+    // Pour chaque proposition cree un TextView
     fun setUpListeProposition(){
         val propositionLayout = findViewById<LinearLayout>(R.id.add_listProposition)
         if(propositionLayout.childCount > 0){
@@ -47,10 +49,8 @@ class AddQuestionActivity : AppCompatActivity()  {
 
             println(propositionToAdd)
 
+            // listner qui cree une AddPropositionActivity en mode edit pour la proposition
             tv.setOnClickListener {
-                println("=============")
-                println(i.toString())
-                println("=============")
                 val intent = Intent(this@AddQuestionActivity, AddPropositionActivity::class.java)
                 intent.putExtra("requestCode",CODE_EDITPROPOSITIONACTIVITY)
                 intent.putExtra("propositionToEdit",propositionToAdd)
@@ -65,11 +65,12 @@ class AddQuestionActivity : AppCompatActivity()  {
 
     fun annuler(view: View) {
         findViewById<TextView>(R.id.add_question).setText("")
-        isAnnule = true
+        isAnnule = true // set pour ne pas supprimer la question
         finish()
     }
     fun creerQuestion(view: View) {finish()}
 
+    // cree une AddPropositionActivity en mode ajout
     fun addPropostition(view: View) {
         val intent = Intent(this@AddQuestionActivity, AddPropositionActivity::class.java)
         intent.putExtra("requestCode",CODE_ADDPROPOSITIONACTIVITY)
@@ -83,9 +84,8 @@ class AddQuestionActivity : AppCompatActivity()  {
                 val proposition = data?.extras!!.getString("key_1")
                 val juste =  data.extras!!.getBoolean("key_2")
                 val isAnnuleProp = data.extras!!.getBoolean("annule")
-                println("=============")
-                println(proposition)
-                println("=============")
+
+                // Si correctement renseignée, ajoute la proposition
                 if(!proposition.equals("") && !isAnnuleProp){
                     val tv = TextView(this)
                     val propositionLayout = findViewById<LinearLayout>(R.id.add_listProposition)
@@ -103,16 +103,16 @@ class AddQuestionActivity : AppCompatActivity()  {
                 val juste =  data.extras!!.getBoolean("key_2")
                 val propositionId = data.extras!!.getInt("idProposition")
                 val isAnnuleProp = data.extras!!.getBoolean("annule")
-                println("=============")
-                println(propositionId.toString())
-                println("=============")
+
                 if(!isAnnuleProp) {
+                    // Si correctement renseignée, edit la proposition
                     if (!proposition.equals("")) {
                         if (juste) {
                             questionFinal.setReponse(propositionId + 1)
                         }
                         questionFinal.setPropositionAt(propositionId, proposition)
                     } else {
+                        // Sinon on la remove
                         questionFinal.removePropositionAt(propositionId)
                     }
                 }
@@ -127,6 +127,7 @@ class AddQuestionActivity : AppCompatActivity()  {
         val data = Intent()
         questionFinal.setIntitule(findViewById<TextView>(R.id.add_question).text.toString())
 
+        // Renvoi l'id de la Question modifiée
         if(currentRequestCode == 3){
             data.putExtra("idQuestion", currentQuestionId)
         }

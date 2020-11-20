@@ -46,13 +46,10 @@ class GestionActivity : AppCompatActivity() {
         val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         val gson = Gson()
         val json = mPrefs.getString("quizzs", "")
-       /* println("aled : ")
-        println(json)
-        println("==========")
-        println(gson.fromJson(json, QuizzList::class.java))*/
         quizzs = gson.fromJson(json, QuizzList::class.java)
         println(quizzs.getSize())
 
+        //Rempli le Recycler view
         vueQuizzList = findViewById(R.id.vue_quizzs_gestion)
         layoutManager = LinearLayoutManager(this)
         vueQuizzList.setLayoutManager(layoutManager)
@@ -65,32 +62,37 @@ class GestionActivity : AppCompatActivity() {
         var xml= ""
         val ctx = this
 
+        //Coroutine pour ne pas bloquer le thread principal
         GlobalScope.launch{
+            //Recupere le contenu du DOM de l'url
             val webBuilderFactory = DocumentBuilderFactory.newInstance()
             val webDocBuilder = webBuilderFactory.newDocumentBuilder()
             val xmlDOM = webDocBuilder.parse(InputSource("https://dept-info.univ-fcomte.fr/joomla/images/CR0700/Quizzs.xml"))
             val xmlSource = DOMSource(xmlDOM);
+
+            //Transform le document DOM (xml) en InputStream pour le Parser
             val outputStream = ByteArrayOutputStream()
             val outputTarget = StreamResult(outputStream)
             TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget)
             val inputStream = ByteArrayInputStream(outputStream.toByteArray())
 
+            //Parser pour le InputStream cree
             val parser = quizzsParser()
-            //val istream = assets.open("src/main/res/values/Quizzs.xml")
             val arrayQuizzs = parser.parse(inputStream)
 
-            println(arrayQuizzs.size)
 
             quizzs.addQuizzs(arrayQuizzs)
 
+            //Rempli les sharedPreference avec le QuizzList
             val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
             val prefsEditor = mPrefs.edit()
+            //L'objet QuizzList est transformé en json
             val gson = Gson()
             val json = gson.toJson(quizzs)
-            println(json)
             prefsEditor.putString("quizzs", json)
             prefsEditor.apply()
 
+            //Scope pour run dans le thread qui permet de travailler dans le layout
             runOnUiThread {
                 vueQuizzList = findViewById(R.id.vue_quizzs_gestion)
                 layoutManager = LinearLayoutManager(ctx)
@@ -100,50 +102,17 @@ class GestionActivity : AppCompatActivity() {
             }
         }
 
-
-
-        /*GlobalScope.launch{
-            task?.execute()
-        }
-
-        GlobalScope.launch{
-            xml = task?.get()
-            //println("PRINT 1  " + xml)
-
-            val factory = DocumentBuilderFactory.newInstance();
-            val builder = factory.newDocumentBuilder();
-            val inputSource = InputSource(StringReader(xml));
-            val xmlDOM = builder.parse(inputSource);
-
-            //println(builder.parse(inputSource));
-
-
-            *//*val file = File("Quizzs.xml")
-            file.writeText(xml);*//*
-            val xmlSource = DOMSource(xmlDOM);
-            val outputStream = ByteArrayOutputStream()
-            val outputTarget = StreamResult(outputStream)
-            TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget)
-            val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-
-            val parser = quizzsParser()
-            //val istream = assets.open("src/main/res/values/Quizzs.xml")
-            quizzs = parser.parse(inputStream)
-
-            println(quizzs.size)
-
-        }*/
-
     }
 
+    //Lance une AddQuizzActivity en mode d'ajout
     fun addQuizz(view: View) {
         val intent = Intent(this@GestionActivity, AddQuizzActivity::class.java)
         intent.putExtra("requestCode",CODE_ADDACTIVITY)
         startActivityForResult(intent, CODE_ADDACTIVITY)
     }
 
+    //Lance une AddQuizzActivity en mode d'edit
     fun editQuizz(id : Int){
-        Toast.makeText(this, id.toString(), Toast.LENGTH_LONG).show()
         val intent = Intent(this@GestionActivity, AddQuizzActivity::class.java)
         intent.putExtra("requestCode",CODE_EDITACTIVITY)
         intent.putExtra("quizzToEdit",quizzs.getQuizzs().get(id))
@@ -151,19 +120,18 @@ class GestionActivity : AppCompatActivity() {
         startActivityForResult(intent, CODE_EDITACTIVITY)
     }
 
+    //Fonction pour gerer le retour de l'activité AddQuizzActivity en fonction de son mode
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            CODE_ADDACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+            CODE_ADDACTIVITY -> if (resultCode == Activity.RESULT_OK) { // Retour ajout
                 val quizzToAdd = data?.getSerializableExtra("key_1") as Quizz
                 val isAnnuleQzz = data.extras!!.getBoolean("annule")
-                println("=============")
-                println(quizzToAdd.getType())
-                println("=============")
 
                 if(!quizzToAdd.getType().equals("") && quizzToAdd.getNbrQuestion() >=1 && !isAnnuleQzz){
-                    quizzs.addQuizz(quizzToAdd)
+                    quizzs.addQuizz(quizzToAdd) // ajoute si le type n'est pas, 1 question au moins et pas d'annulation
 
+                    // maj les SharedPreference
                     val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
                     val prefsEditor = mPrefs.edit()
                     val gson = Gson()
@@ -173,22 +141,21 @@ class GestionActivity : AppCompatActivity() {
                 }
 
             }
-            CODE_EDITACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+            CODE_EDITACTIVITY -> if (resultCode == Activity.RESULT_OK) { // Retour edit
                 val quizzToEdit = data?.getSerializableExtra("key_1") as Quizz
                 val idQuizzToEdit = data.getIntExtra("idQuizz",0)
                 val isAnnuleQst = data.extras!!.getBoolean("annule")
 
-                println("=============")
-                println(quizzToEdit.getType())
-                println("=============")
                 if(!isAnnuleQst) {
                     if (!quizzToEdit.getType().equals("") && quizzToEdit.getNbrQuestion() >= 1) {
-                        quizzs.getQuizzs().set(idQuizzToEdit, quizzToEdit)
+                        quizzs.getQuizzs().set(idQuizzToEdit, quizzToEdit) // Update le quizz qui avait été selectionné
 
                     } else {
-                        quizzs.getQuizzs().removeAt(idQuizzToEdit)
+                        quizzs.getQuizzs().removeAt(idQuizzToEdit) // Si on a vide le type de quizz ou retiré les questions : on remove
                     }
                 }
+
+                // maj les SharedPreference
                 val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
                 val prefsEditor = mPrefs.edit()
                 val gson = Gson()
@@ -206,6 +173,7 @@ class GestionActivity : AppCompatActivity() {
         vueQuizzList.setAdapter(adapter)
     }
 
+    // pour que le retour soit geré dans la MainActivity
     override fun finish() {
         val data = Intent()
         setResult(Activity.RESULT_OK, data)

@@ -14,16 +14,18 @@ import com.example.projet_quizzs.modelQuizz.Quizz
 import com.example.projet_quizzs.R
 import com.example.projet_quizzs.mainQuizz.MainActivity
 
-
+// Class qui permet de remplir le RecyclerVIew dans la GestionActivity pour chaque item de la liste de quizz
 class GestionQuizzAdapter(contxt : Context, quizzL : ArrayList<Quizz>): RecyclerView.Adapter<GestionQuizzAdapter.ViewHolder>() {
 
     var ctx = contxt
     var quizzs = quizzL
 
 
+    // Class du ViewHolder
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textItemQuizz: TextView
         var buttonEdit : Button
+        // Chaque item contient un TextView et un Button à modifier en fonction de l'item
 
         init {
             textItemQuizz = itemView.findViewById(R.id.text_item_quizz)
@@ -47,6 +49,7 @@ class GestionQuizzAdapter(contxt : Context, quizzL : ArrayList<Quizz>): Recycler
         holder.textItemQuizz.setOnClickListener { Toast.makeText(ctx, quizzs.get(position).getType(), Toast.LENGTH_LONG).show() }
         holder.buttonEdit.setOnClickListener{
             if (ctx is GestionActivity) {
+                //Quand on clique sur le bouton Modifier : lance la fonction editQuizz qui lance la AddQuizzActivity en mode edit
                 (ctx as GestionActivity).editQuizz(position)
             }
         }

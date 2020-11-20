@@ -2,6 +2,8 @@ package com.example.projet_quizzs.modelQuizz
 
 import java.io.Serializable
 
+// Objet representant une Question (liste de String pour les propositions, l'intitule de la Question et la position dans la liste de la reponse)
+// Serializable pour pouvoir passer l'objet entre Activity
 class Question : Serializable{
     private var intitule:String? = null
     private var reponse:Int = 0

@@ -23,12 +23,11 @@ class AddPropositionActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_addproposition)
 
+        // Si en mode Edit mets la valeur de la proposition dans le TextView
         if(currentRequestCode == 3 ){
             currentPropositionId = data.extras?.getInt("idProposition")!!
             val propositiontoEdit = data.extras?.getString("propositionToEdit")
-            println("==============")
-            println(propositiontoEdit)
-            println("==============")
+
             findViewById<TextView>(R.id.add_proposition).setText(propositiontoEdit)
         }
     }
@@ -39,14 +38,16 @@ class AddPropositionActivity : AppCompatActivity() {
 
     fun annuler(view: View) {
         findViewById<EditText>(R.id.add_proposition).setText("")
-        isAnnule = true
+        isAnnule = true // Set pour ne pas supprimer
         finish()
     }
 
     override fun finish() {
         val data = Intent()
         val proposition = findViewById<EditText>(R.id.add_proposition).text.toString()
-        val juste = findViewById<CheckBox>(R.id.add_prop_checkbox).isChecked
+        val juste = findViewById<CheckBox>(R.id.add_prop_checkbox).isChecked // Si la proposition doit etre la bonne reponse --> true
+
+        // Renvoi l'id de la Question modifiée
         if(currentRequestCode == 3){
             data.putExtra("idProposition", currentPropositionId)
         }

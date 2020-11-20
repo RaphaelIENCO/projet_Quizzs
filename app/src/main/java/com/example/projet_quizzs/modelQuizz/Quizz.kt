@@ -3,6 +3,8 @@ package com.example.projet_quizzs.modelQuizz
 import com.example.projet_quizzs.modelQuizz.Question
 import java.io.Serializable
 
+// Objet representant un Quizz (liste de Question et le type)
+// Serializable pour pouvoir passer l'objet entre Activity
 class Quizz : Serializable {
 
     private var questions:ArrayList<Question> = ArrayList<Question>()

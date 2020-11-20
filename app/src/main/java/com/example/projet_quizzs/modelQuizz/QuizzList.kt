@@ -2,6 +2,7 @@ package com.example.projet_quizzs.modelQuizz
 
 import com.example.projet_quizzs.modelQuizz.Quizz
 
+// Objet pour stocker une liste de Quizz --> plus facile à stocker dans les SharedPreferences
 class QuizzList {
     private var quizzs: ArrayList<Quizz> = ArrayList<Quizz>();
 
