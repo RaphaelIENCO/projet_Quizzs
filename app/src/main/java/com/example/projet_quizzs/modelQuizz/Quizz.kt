@@ -20,6 +20,14 @@ class Quizz : Serializable {
         return type
     }
 
+    fun setQuestionAt(id : Int, q : Question) {
+        questions.set(id,q)
+    }
+
+    fun removeQuestionAt(id : Int) {
+        questions.removeAt(id)
+    }
+
     fun getQuestion(id : Int) : Question{
         return questions.get(id)
     }

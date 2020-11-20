@@ -63,6 +63,7 @@ class GestionActivity : AppCompatActivity() {
 
     fun updateQuizzs(view: View) {
         var xml= ""
+        val ctx = this
 
         GlobalScope.launch{
             val webBuilderFactory = DocumentBuilderFactory.newInstance()
@@ -89,6 +90,14 @@ class GestionActivity : AppCompatActivity() {
             println(json)
             prefsEditor.putString("quizzs", json)
             prefsEditor.apply()
+
+            runOnUiThread {
+                vueQuizzList = findViewById(R.id.vue_quizzs_gestion)
+                layoutManager = LinearLayoutManager(ctx)
+                vueQuizzList.setLayoutManager(layoutManager)
+                adapter = GestionQuizzAdapter(ctx, quizzs.getQuizzs())
+                vueQuizzList.setAdapter(adapter)
+            }
         }
 
 
@@ -172,13 +181,15 @@ class GestionActivity : AppCompatActivity() {
                 if(!quizzToEdit.getType().equals("") && quizzToEdit.getNbrQuestion() >=1){
                     quizzs.getQuizzs().set(idQuizzToEdit,quizzToEdit)
 
-                    val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
-                    val prefsEditor = mPrefs.edit()
-                    val gson = Gson()
-                    val json = gson.toJson(quizzs)
-                    prefsEditor.putString("quizzs", json)
-                    prefsEditor.apply()
+                }else{
+                    quizzs.getQuizzs().removeAt(idQuizzToEdit)
                 }
+                val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
+                val prefsEditor = mPrefs.edit()
+                val gson = Gson()
+                val json = gson.toJson(quizzs)
+                prefsEditor.putString("quizzs", json)
+                prefsEditor.apply()
             }
             else -> {
             }

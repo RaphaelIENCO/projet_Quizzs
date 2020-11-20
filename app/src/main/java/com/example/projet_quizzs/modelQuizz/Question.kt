@@ -11,6 +11,14 @@ class Question : Serializable{
         propositions.add(propos!!)
     }
 
+    fun setPropositionAt(id : Int ,p : String){
+        propositions.set(id,p)
+    }
+
+    fun removePropositionAt(id: Int) {
+        propositions.removeAt(id)
+    }
+
     fun setReponse( rep : Int?){
         reponse = rep!!
     }
@@ -34,5 +42,7 @@ class Question : Serializable{
     fun getProposition() : ArrayList<String> {
         return propositions
     }
+
+
 
 }

@@ -13,7 +13,8 @@ import com.example.projet_quizzs.modelQuizz.Quizz
 import com.google.gson.Gson
 
 class AddQuizzActivity : AppCompatActivity() {
-    private val CODE_ADDQUESTIONACTIVITY = 3
+    private val CODE_ADDQUESTIONACTIVITY = 2
+    private val CODE_EDITQUESTIONACTIVITY = 3
     private var currentRequestCode = 0
     private var currentQuizzId = 0
 
@@ -32,6 +33,31 @@ class AddQuizzActivity : AppCompatActivity() {
             currentQuizzId = data.extras?.getInt("idQuizz")!!
             quizzFinal = data.extras?.getSerializable("quizzToEdit") as Quizz
             findViewById<TextView>(R.id.add_type).setText(quizzFinal.getType())
+            // Ajout liste question et ajout d'un listner dessus
+            setUpListeQuestion()
+        }
+    }
+
+    fun setUpListeQuestion(){
+        val questionLayout = findViewById<LinearLayout>(R.id.add_listQuestion)
+        if(questionLayout.childCount > 0){
+            questionLayout.removeAllViews()
+        }
+        for (i in 0 until quizzFinal.getNbrQuestion()){
+            val questionToAdd = quizzFinal.getQuestion(i)
+            val tv = TextView(this)
+
+            tv.setOnClickListener {
+                val intent = Intent(this@AddQuizzActivity, AddQuestionActivity::class.java)
+                intent.putExtra("requestCode",CODE_EDITQUESTIONACTIVITY)
+                intent.putExtra("questionToEdit",questionToAdd)
+                intent.putExtra("idQuestion",i)
+                startActivityForResult(intent, CODE_EDITQUESTIONACTIVITY)
+            }
+            tv.setText(questionToAdd.getIntitule())
+
+
+            questionLayout.addView(tv)
         }
     }
 
@@ -43,6 +69,7 @@ class AddQuizzActivity : AppCompatActivity() {
 
     fun addQuestion(view: View) {
         val intent = Intent(this@AddQuizzActivity, AddQuestionActivity::class.java)
+        intent.putExtra("requestCode",CODE_ADDQUESTIONACTIVITY)
         startActivityForResult(intent, CODE_ADDQUESTIONACTIVITY)
     }
 
@@ -56,17 +83,30 @@ class AddQuizzActivity : AppCompatActivity() {
                 println("=============")
 
                 if(!questionToAdd.getIntitule().equals("") && questionToAdd.getProposition().size >=2){
-                    val tv = TextView(this)
-                    val propositionLayout = findViewById<LinearLayout>(R.id.add_listQuestion)
-                    tv.setText(questionToAdd.getIntitule())
-                    propositionLayout.addView(tv)
                     quizzFinal.addQuestion(questionToAdd)
+                }
+
+            }
+            CODE_EDITQUESTIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+                val questionToEdit = data?.getSerializableExtra("key_1") as Question
+                val idQuestionToEdit = data.getIntExtra("idQuestion",0)
+                println("=============")
+                println(questionToEdit.getIntitule())
+                println("=============")
+
+                if(!questionToEdit.getIntitule().equals("") && questionToEdit.getProposition().size >=2){
+                    quizzFinal.setQuestionAt(idQuestionToEdit,questionToEdit)
+
+
+                }else{
+                    quizzFinal.removeQuestionAt(idQuestionToEdit)
                 }
 
             }
             else -> {
             }
         }
+        setUpListeQuestion()
     }
 
 

@@ -8,18 +8,58 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.projet_quizzs.R
 import com.example.projet_quizzs.modelQuizz.Question
+import com.example.projet_quizzs.modelQuizz.Quizz
 import kotlinx.android.synthetic.main.activity_main.*
 
 class AddQuestionActivity : AppCompatActivity()  {
-    private val CODE_ADDPROPOSITIONACTIVITY = 4
-    val CLE_1 = "key1"
+    private val CODE_ADDPROPOSITIONACTIVITY = 2
+    private val CODE_EDITPROPOSITIONACTIVITY = 3
+    private var currentRequestCode = 0
+    private var currentQuestionId = 0
 
     var questionFinal = Question()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var data = intent
+        currentRequestCode = data.extras?.getInt("requestCode")!!
 
         setContentView(R.layout.activity_addquestion)
+
+        if(currentRequestCode == 3 ){
+            currentQuestionId = data.extras?.getInt("idQuestion")!!
+            questionFinal = data.extras?.getSerializable("questionToEdit") as Question
+            findViewById<TextView>(R.id.add_question).setText(questionFinal.getIntitule())
+            // Ajout liste question et ajout d'un listner dessus
+            setUpListeProposition()
+        }
+    }
+
+    fun setUpListeProposition(){
+        val propositionLayout = findViewById<LinearLayout>(R.id.add_listProposition)
+        if(propositionLayout.childCount > 0){
+            propositionLayout.removeAllViews()
+        }
+        for (i in 0 until questionFinal.getProposition().size){
+            val propositionToAdd = questionFinal.getProposition().get(i)
+            val tv = TextView(this)
+
+            println(propositionToAdd)
+
+            tv.setOnClickListener {
+                println("=============")
+                println(i.toString())
+                println("=============")
+                val intent = Intent(this@AddQuestionActivity, AddPropositionActivity::class.java)
+                intent.putExtra("requestCode",CODE_EDITPROPOSITIONACTIVITY)
+                intent.putExtra("propositionToEdit",propositionToAdd)
+                intent.putExtra("idProposition",i)
+                startActivityForResult(intent, CODE_EDITPROPOSITIONACTIVITY)
+            }
+            tv.setText(propositionToAdd)
+
+            propositionLayout.addView(tv)
+        }
     }
 
     fun annuler(view: View) {
@@ -30,6 +70,7 @@ class AddQuestionActivity : AppCompatActivity()  {
 
     fun addPropostition(view: View) {
         val intent = Intent(this@AddQuestionActivity, AddPropositionActivity::class.java)
+        intent.putExtra("requestCode",CODE_ADDPROPOSITIONACTIVITY)
         startActivityForResult(intent, CODE_ADDPROPOSITIONACTIVITY)
     }
 
@@ -54,14 +95,35 @@ class AddQuestionActivity : AppCompatActivity()  {
                     questionFinal.addProposition(proposition)
                 }
             }
+            CODE_EDITPROPOSITIONACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+                val proposition = data?.extras!!.getString("key_1").toString()
+                val juste =  data.extras!!.getBoolean("key_2")
+                val propositionId = data.extras!!.getInt("idProposition")
+                println("=============")
+                println(propositionId.toString())
+                println("=============")
+                if(!proposition.equals("")){
+                    if(juste){
+                        questionFinal.setReponse(propositionId+1)
+                    }
+                    questionFinal.setPropositionAt(propositionId,proposition)
+                }else{
+                    questionFinal.removePropositionAt(propositionId)
+                }
+            }
             else -> {
             }
         }
+        setUpListeProposition()
     }
 
     override fun finish() {
         val data = Intent()
         questionFinal.setIntitule(findViewById<TextView>(R.id.add_question).text.toString())
+
+        if(currentRequestCode == 3){
+            data.putExtra("idQuestion", currentQuestionId)
+        }
 
         data.putExtra("key_1", questionFinal)
         setResult(Activity.RESULT_OK, data)
