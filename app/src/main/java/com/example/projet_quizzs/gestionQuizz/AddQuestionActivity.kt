@@ -22,7 +22,10 @@ class AddQuestionActivity : AppCompatActivity()  {
         setContentView(R.layout.activity_addquestion)
     }
 
-    fun annuler(view: View) {finish()}
+    fun annuler(view: View) {
+        findViewById<TextView>(R.id.add_question).setText("")
+        finish()
+    }
     fun creerQuestion(view: View) {finish()}
 
     fun addPropostition(view: View) {

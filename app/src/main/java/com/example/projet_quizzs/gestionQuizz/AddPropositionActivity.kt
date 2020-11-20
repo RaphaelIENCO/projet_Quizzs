@@ -22,6 +22,7 @@ class AddPropositionActivity : AppCompatActivity() {
     }
 
     fun annuler(view: View) {
+        findViewById<EditText>(R.id.add_proposition).setText("")
         finish()
     }
 

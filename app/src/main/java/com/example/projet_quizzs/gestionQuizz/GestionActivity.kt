@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult
 
 class GestionActivity : AppCompatActivity() {
     private val CODE_ADDACTIVITY = 2
+    private val CODE_EDITACTIVITY = 3
 
     var quizzs: QuizzList = QuizzList();
     lateinit var layoutManager : RecyclerView.LayoutManager
@@ -128,11 +129,17 @@ class GestionActivity : AppCompatActivity() {
 
     fun addQuizz(view: View) {
         val intent = Intent(this@GestionActivity, AddQuizzActivity::class.java)
+        intent.putExtra("requestCode",CODE_ADDACTIVITY)
         startActivityForResult(intent, CODE_ADDACTIVITY)
     }
 
     fun editQuizz(id : Int){
         Toast.makeText(this, id.toString(), Toast.LENGTH_LONG).show()
+        val intent = Intent(this@GestionActivity, AddQuizzActivity::class.java)
+        intent.putExtra("requestCode",CODE_EDITACTIVITY)
+        intent.putExtra("quizzToEdit",quizzs.getQuizzs().get(id))
+        intent.putExtra("idQuizz",id)
+        startActivityForResult(intent, CODE_EDITACTIVITY)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -156,9 +163,31 @@ class GestionActivity : AppCompatActivity() {
                 }
 
             }
+            CODE_EDITACTIVITY -> if (resultCode == Activity.RESULT_OK) {
+                val quizzToEdit = data?.getSerializableExtra("key_1") as Quizz
+                val idQuizzToEdit = data.getIntExtra("idQuizz",0)
+                println("=============")
+                println(quizzToEdit.getType())
+                println("=============")
+                if(!quizzToEdit.getType().equals("") && quizzToEdit.getNbrQuestion() >=1){
+                    quizzs.getQuizzs().set(idQuizzToEdit,quizzToEdit)
+
+                    val mPrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
+                    val prefsEditor = mPrefs.edit()
+                    val gson = Gson()
+                    val json = gson.toJson(quizzs)
+                    prefsEditor.putString("quizzs", json)
+                    prefsEditor.apply()
+                }
+            }
             else -> {
             }
         }
+        vueQuizzList = findViewById(R.id.vue_quizzs_gestion)
+        layoutManager = LinearLayoutManager(this)
+        vueQuizzList.setLayoutManager(layoutManager)
+        adapter = GestionQuizzAdapter(this, quizzs.getQuizzs())
+        vueQuizzList.setAdapter(adapter)
     }
 
 }

@@ -14,17 +14,32 @@ import com.google.gson.Gson
 
 class AddQuizzActivity : AppCompatActivity() {
     private val CODE_ADDQUESTIONACTIVITY = 3
+    private var currentRequestCode = 0
+    private var currentQuizzId = 0
 
-    var quizzFinal = Quizz()
+    private var quizzFinal = Quizz()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        var data = intent
+        currentRequestCode = data.extras?.getInt("requestCode")!!
+
+
         setContentView(R.layout.activity_addquizz)
+
+        if(currentRequestCode == 3 ){
+            currentQuizzId = data.extras?.getInt("idQuizz")!!
+            quizzFinal = data.extras?.getSerializable("quizzToEdit") as Quizz
+            findViewById<TextView>(R.id.add_type).setText(quizzFinal.getType())
+        }
     }
 
     fun creerQuizz(view: View) {finish()}
-    fun annuler(view: View) {finish()}
+    fun annuler(view: View) {
+        findViewById<TextView>(R.id.add_type).setText("")
+        finish()
+    }
 
     fun addQuestion(view: View) {
         val intent = Intent(this@AddQuizzActivity, AddQuestionActivity::class.java)
@@ -58,6 +73,10 @@ class AddQuizzActivity : AppCompatActivity() {
     override fun finish() {
         val data = Intent()
         quizzFinal.setType(findViewById<TextView>(R.id.add_type).text.toString())
+
+        if(currentRequestCode == 3){
+            data.putExtra("idQuizz", currentQuizzId)
+        }
 
         data.putExtra("key_1", quizzFinal)
         setResult(Activity.RESULT_OK, data)
